@@ -1,0 +1,11 @@
+node_modules/
+.playwright-mcp/
+demo/.port
+# review renders (regenerable); the master MP4 and poster are kept
+out/*
+!out/welder-hero.mp4
+!out/poster.jpg
+# raw destick outputs; the frames used by the video are in public/hero/
+public/hero/destick/
+__pycache__/
+*.log

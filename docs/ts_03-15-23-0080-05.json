@@ -1,0 +1,459 @@
+{
+ "csv": "/home/chen/data2/weld_moe/data/raid/intel_robotic_welding_dataset/undercut_4_03-15-23_Fe410/03-15-23-0080-05/03-15-23-0080-05.csv",
+ "n_rows": 309,
+ "arc_on_rows": 210,
+ "channels": {
+  "Pressure": {
+   "channel": "Pressure",
+   "unit": "bar",
+   "stats": {
+    "n": 309,
+    "mean": 0.8863106796116503,
+    "std": 1.2107696262890797,
+    "min": 0.1,
+    "max": 3.34,
+    "first": 3.34,
+    "last": 2.78,
+    "robust_sigma_resid": 0.8482815108732163,
+    "q05": 0.1,
+    "q50": 0.19,
+    "q95": 3.31
+   },
+   "trend": {
+    "slope_per_s": -0.05476291644465774,
+    "total_change": -1.96127654243658,
+    "r2": 0.22008191899496232,
+    "p_value": 2.5786861383111554e-18,
+    "label": "decrease"
+   },
+   "noise": {
+    "ratio": 0.5236305622674176,
+    "label": "noisy"
+   },
+   "spikes": {
+    "upward": [],
+    "downward": [],
+    "prominence_threshold": 4.241407554366082
+   },
+   "level_shifts": [],
+   "oscillation": {
+    "dominant_period_s": 14.883720930232558,
+    "dominant_power_share": 0.633705293925813,
+    "hf_energy_ratio": 0.007740363715310723
+   },
+   "instability": {
+    "windows": [
+     {
+      "start": 37,
+      "end": 75
+     },
+     {
+      "start": 264,
+      "end": 308
+     }
+    ],
+    "rolling_sigma_median": 0.0303167014207262
+   },
+   "arc_on": {
+    "mean": 0.2096666666666667,
+    "std": 0.2089073235702134,
+    "n": 210
+   }
+  },
+  "CO2 Weld Flow": {
+   "channel": "CO2 Weld Flow",
+   "unit": "L/min",
+   "stats": {
+    "n": 309,
+    "mean": 10.037928802588997,
+    "std": 7.4444678259603885,
+    "min": -0.03,
+    "max": 29.79,
+    "first": 0.0,
+    "last": 0.02,
+    "robust_sigma_resid": 1.0932119443099984,
+    "q05": 0.0,
+    "q50": 10.41,
+    "q95": 27.651999999999983
+   },
+   "trend": {
+    "slope_per_s": 0.048355127490736644,
+    "total_change": 1.7317882868775452,
+    "r2": 0.00453891461056748,
+    "p_value": 0.23767239029472434,
+    "label": "keep steady"
+   },
+   "noise": {
+    "ratio": 0.07376101101882453,
+    "label": "noisy"
+   },
+   "spikes": {
+    "upward": [
+     {
+      "index": 88,
+      "prominence": 29.610073944220513
+     }
+    ],
+    "downward": [],
+    "prominence_threshold": 5.466059721549992
+   },
+   "level_shifts": [
+    {
+     "index": 60,
+     "delta": 18.540000000000003,
+     "label": "sudden increase"
+    },
+    {
+     "index": 80,
+     "delta": 10.369999999999997,
+     "label": "sudden increase"
+    },
+    {
+     "index": 100,
+     "delta": -12.850000000000001,
+     "label": "sudden decrease"
+    },
+    {
+     "index": 120,
+     "delta": -5.554999999999998,
+     "label": "sudden decrease"
+    },
+    {
+     "index": 290,
+     "delta": -7.4,
+     "label": "sudden decrease"
+    }
+   ],
+   "oscillation": {
+    "dominant_period_s": 14.883720930232558,
+    "dominant_power_share": 0.664778297200961,
+    "hf_energy_ratio": 0.00011497549448851343
+   },
+   "instability": {
+    "windows": [
+     {
+      "start": 42,
+      "end": 148
+     },
+     {
+      "start": 266,
+      "end": 308
+     }
+    ],
+    "rolling_sigma_median": 0.043345409160050606
+   },
+   "arc_on": {
+    "mean": 13.312761904761906,
+    "std": 6.242740240088115,
+    "n": 210
+   }
+  },
+  "Feed": {
+   "channel": "Feed",
+   "unit": "mm/min",
+   "stats": {
+    "n": 309,
+    "mean": 107.49064724919094,
+    "std": 57.31273960703602,
+    "min": 0.58,
+    "max": 167.37,
+    "first": 0.58,
+    "last": 140.17,
+    "robust_sigma_resid": 29.859615244950657,
+    "q05": 5.2620000000000005,
+    "q50": 134.65,
+    "q95": 163.516
+   },
+   "trend": {
+    "slope_per_s": 4.99452545869414,
+    "total_change": 178.87370247416223,
+    "r2": 0.8169968590289252,
+    "p_value": 3.083040551941613e-115,
+    "label": "increase"
+   },
+   "noise": {
+    "ratio": 0.3622913127217414,
+    "label": "noisy"
+   },
+   "spikes": {
+    "upward": [],
+    "downward": [],
+    "prominence_threshold": 149.2980762247533
+   },
+   "level_shifts": [],
+   "oscillation": {
+    "dominant_period_s": 14.883720930232558,
+    "dominant_power_share": 0.7233688814098229,
+    "hf_energy_ratio": 0.004495260155752025
+   },
+   "instability": {
+    "windows": [
+     {
+      "start": 0,
+      "end": 21
+     },
+     {
+      "start": 50,
+      "end": 73
+     }
+    ],
+    "rolling_sigma_median": 3.00826007401282
+   },
+   "arc_on": {
+    "mean": 123.95504761904762,
+    "std": 39.51349649167652,
+    "n": 210
+   }
+  },
+  "Primary Weld Current": {
+   "channel": "Primary Weld Current",
+   "unit": "A",
+   "stats": {
+    "n": 309,
+    "mean": 188.04071197411002,
+    "std": 130.25915912542456,
+    "min": 0.0,
+    "max": 321.46,
+    "first": 0.0,
+    "last": 0.0,
+    "robust_sigma_resid": 32.82599775625664,
+    "q05": 0.0,
+    "q50": 271.53,
+    "q95": 291.214
+   },
+   "trend": {
+    "slope_per_s": 0.853699037260891,
+    "total_change": 30.574337613529586,
+    "r2": 0.004620907813687851,
+    "p_value": 0.23347032942172105,
+    "label": "keep steady"
+   },
+   "noise": {
+    "ratio": 0.21808280155471296,
+    "label": "noisy"
+   },
+   "spikes": {
+    "upward": [
+     {
+      "index": 157,
+      "prominence": 310.14352438979745
+     }
+    ],
+    "downward": [],
+    "prominence_threshold": 164.1299887812832
+   },
+   "level_shifts": [
+    {
+     "index": 55,
+     "delta": 278.96000000000004,
+     "label": "sudden increase"
+    },
+    {
+     "index": 265,
+     "delta": -278.96000000000004,
+     "label": "sudden decrease"
+    }
+   ],
+   "oscillation": {
+    "dominant_period_s": 14.883720930232558,
+    "dominant_power_share": 0.5580459187844958,
+    "hf_energy_ratio": 0.006431054660146543
+   },
+   "instability": {
+    "windows": [
+     {
+      "start": 40,
+      "end": 70
+     },
+     {
+      "start": 248,
+      "end": 278
+     }
+    ],
+    "rolling_sigma_median": 6.400989754516363
+   },
+   "arc_on": {
+    "mean": 276.57428571428574,
+    "std": 22.393906329184112,
+    "n": 210
+   }
+  },
+  "Wire Consumed": {
+   "channel": "Wire Consumed",
+   "unit": "mm",
+   "stats": {
+    "n": 309,
+    "mean": 2307.747637540454,
+    "std": 1752.837618962395,
+    "min": 20.66,
+    "max": 4765.9,
+    "first": 20.66,
+    "last": 4765.9,
+    "robust_sigma_resid": 269.49911645018966,
+    "q05": 24.26,
+    "q50": 2269.84,
+    "q95": 4765.9
+   },
+   "trend": {
+    "slope_per_s": 167.35103153163774,
+    "total_change": 5993.5020595051665,
+    "r2": 0.9806356518323284,
+    "p_value": 5.214084941256729e-265,
+    "label": "increase"
+   },
+   "noise": {
+    "ratio": 0.11363533943733065,
+    "label": "noisy"
+   },
+   "spikes": {
+    "upward": [],
+    "downward": [],
+    "prominence_threshold": 1347.4955822509482
+   },
+   "level_shifts": [],
+   "oscillation": {
+    "dominant_period_s": 14.883720930232558,
+    "dominant_power_share": 0.8398386435774717,
+    "hf_energy_ratio": 0.00016455527469815895
+   },
+   "instability": {
+    "windows": [
+     {
+      "start": 0,
+      "end": 61
+     },
+     {
+      "start": 258,
+      "end": 308
+     }
+    ],
+    "rolling_sigma_median": 16.25772785259265
+   },
+   "arc_on": {
+    "mean": 2390.9464761904765,
+    "std": 1372.4600375241955,
+    "n": 210
+   }
+  },
+  "Secondary Weld Voltage": {
+   "channel": "Secondary Weld Voltage",
+   "unit": "V",
+   "stats": {
+    "n": 309,
+    "mean": 12.538964401294498,
+    "std": 8.771464190248052,
+    "min": 0.0,
+    "max": 40.23,
+    "first": 0.0,
+    "last": 0.0,
+    "robust_sigma_resid": 0.9087171149218441,
+    "q05": 0.0,
+    "q50": 17.17,
+    "q95": 18.326
+   },
+   "trend": {
+    "slope_per_s": 0.008374384713313638,
+    "total_change": 0.29991982461634886,
+    "r2": 9.806090314453279e-05,
+    "p_value": 0.8623605500272399,
+    "label": "keep steady"
+   },
+   "noise": {
+    "ratio": 0.045453582643323054,
+    "label": "noisy"
+   },
+   "spikes": {
+    "upward": [
+     {
+      "index": 51,
+      "prominence": 40.222209874685284
+     },
+     {
+      "index": 264,
+      "prominence": 5.386220632796574
+     }
+    ],
+    "downward": [
+     {
+      "index": 65,
+      "prominence": 5.386220632796574
+     }
+    ],
+    "prominence_threshold": 4.543585574609221
+   },
+   "level_shifts": [
+    {
+     "index": 50,
+     "delta": 17.14,
+     "label": "sudden increase"
+    },
+    {
+     "index": 265,
+     "delta": -17.46,
+     "label": "sudden decrease"
+    }
+   ],
+   "oscillation": {
+    "dominant_period_s": 14.883720930232558,
+    "dominant_power_share": 0.2520405616223489,
+    "hf_energy_ratio": 0.013338477136776241
+   },
+   "instability": {
+    "windows": [
+     {
+      "start": 35,
+      "end": 71
+     },
+     {
+      "start": 250,
+      "end": 279
+     }
+    ],
+    "rolling_sigma_median": 0.3965387371623726
+   },
+   "arc_on": {
+    "mean": 17.567904761904764,
+    "std": 1.5268038170281106,
+    "n": 210
+   }
+  }
+ },
+ "pairs": [
+  {
+   "pair": [
+    "Primary Weld Current",
+    "Secondary Weld Voltage"
+   ],
+   "pearson_r": 0.8174236105680616,
+   "max_lag_r": 0.8568013592990283,
+   "lag_s": 0.5813953488372093
+  },
+  {
+   "pair": [
+    "Primary Weld Current",
+    "Feed"
+   ],
+   "pearson_r": 0.801659119998181,
+   "max_lag_r": 0.8290537234312078,
+   "lag_s": -0.813953488372093
+  },
+  {
+   "pair": [
+    "Primary Weld Current",
+    "CO2 Weld Flow"
+   ],
+   "pearson_r": 0.6525521514993542,
+   "max_lag_r": 0.6607401364364296,
+   "lag_s": -0.3488372093023256
+  },
+  {
+   "pair": [
+    "Secondary Weld Voltage",
+    "CO2 Weld Flow"
+   ],
+   "pearson_r": 0.4850847542829756,
+   "max_lag_r": 0.5714918407726156,
+   "lag_s": -1.627906976744186
+  }
+ ]
+}
