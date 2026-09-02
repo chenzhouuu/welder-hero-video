@@ -62,8 +62,8 @@ figure appears anywhere.
 
 ## Live demo
 
-`npm run demo` serves `demo/` (index.html + 1080p web encode, 6 MB; the full-resolution master is `out/welder-hero.mp4`) on port 8093 with byte-range support, reachable on the tailnet at http://100.116.161.83:8093/ and on the LAN at http://192.168.191.109:8093/. `npm run demo:build` regenerates the page from `scripts/demo_template.html`; `scripts/build_demo.py --embed` builds the self-contained Artifact version.
+`npm run demo` serves `demo/` (index.html + 1080p web encode, 6 MB; the full-resolution master is `out/welder-hero.mp4`) on port 8093 with byte-range support; open `http://<host>:8093/` from any machine that can reach the host. `npm run demo:build` regenerates the page from `scripts/demo_template.html`; `scripts/build_demo.py --embed` builds the self-contained Artifact version.
 
 ## Data licence
 
-The photos under `public/hero/` are derived (label-removed) frames from the Intel Robotic Welding Multimodal Dataset, which is research-only. Keep this repository private unless redistribution of derived images has been cleared.
+The photos under `public/hero/` are derived, label-removed frames of one weld from the Intel Robotic Welding Multimodal Dataset (IntelLabs, research use). They are included for the demonstration only; the dataset's own terms apply to any further use. Model weights and the raw dataset are not part of this repository.
