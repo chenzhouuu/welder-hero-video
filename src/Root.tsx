@@ -28,7 +28,7 @@ export const Root: React.FC = () => (
     {SCENES.map((s) => (
       <Composition
         key={s.id}
-        id={`scene-${String(s.n).padStart(2, '0')}`}
+        id={s.id}
         component={SceneHost}
         defaultProps={{sceneId: s.id}}
         durationInFrames={framesOf(s)}

@@ -1,0 +1,15 @@
+{
+ "image": "plate_front_full.jpg",
+ "model": "sam31",
+ "prompt": "a weld bead",
+ "box": [
+  711.3,
+  288.1,
+  1271.8,
+  333.0
+ ],
+ "score": 0.7422,
+ "presence": 0.00026,
+ "mask_area_px": 20171,
+ "n_candidates": 30
+}

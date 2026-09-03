@@ -15,6 +15,8 @@ export type SceneProps = {
 };
 
 export type Keyframe = {at: number; label: string};
+/** A review anchor inside a continuous scene (seconds from the scene start). */
+export type ChapterMark = {n: number; at: number; title: string; message: string};
 
 export type SceneDef = {
   id: string;
@@ -28,6 +30,8 @@ export type SceneDef = {
   notes: string[];
   /** progress values worth inspecting as static compositions */
   keyframes: Keyframe[];
+  /** chapters of a continuous scene, shown as seek buttons in Director Mode */
+  chapters?: ChapterMark[];
   Component: React.FC<SceneProps>;
 };
 

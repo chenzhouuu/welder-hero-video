@@ -1,0 +1,16 @@
+{
+ "image": "plate_front_full.jpg",
+ "model": "sam31",
+ "prompt": "a weld bead",
+ "box": [
+  711.3,
+  288.1,
+  1271.8,
+  333.0
+ ],
+ "score": 0.7422,
+ "mask": "hero/plate_front_full_sam31_mask.png",
+ "note": "SAM 3.1 (Meta reference stack, bf16) on the label-removed front photo; top candidate for the prompt. Box/score from research/detector_check/full/sam31_full.jsonl (image 03-15-23-0080-05#0); mask re-extracted by scripts/sam_bead_mask.py.",
+ "presence": 0.00026,
+ "mask_area_px": 20171
+}

@@ -1,7 +1,7 @@
 """Screenshot storyboard keyframes with Playwright.
 
-usage: true  OUT_DIR scene:p [scene:p ...] [--ui] [--url http://localhost:8094]
-  scene:p  e.g. 3:0.6  → Director Mode scene 3 at progress 0.6; the 1920×1080 frame is saved
+usage: python3 scripts/shot.py OUT_DIR spec [spec ...] [--ui] [--url=http://localhost:8094]
+  spec     scene:p (e.g. 1:0.6, progress) or t=SECONDS (e.g. t=26.5, story seconds); the 1920×1080 frame is saved
   --ui     capture the whole Director page instead of the bare frame
 """
 import sys, time
@@ -18,14 +18,20 @@ with sync_playwright() as p:
     logs = []
     pg.on('console', lambda m: logs.append(f'{m.type}: {m.text}'))
     for spec in args[1:]:
-        n, pr = spec.split(':')
-        pg.goto(f'{url}/?director=1&scene={n}&p={pr}&notes={1 if ui else 0}')
+        if spec.startswith('t='):
+            n, pr = '1', None
+            query = f'scene=1&t={spec[2:]}'
+        else:
+            n, pr = spec.split(':')
+            query = f'scene={n}&p={pr}'
+        pg.goto(f'{url}/?director=1&{query}&notes={1 if ui else 0}')
         pg.wait_for_load_state('networkidle')
         pg.wait_for_timeout(600)
         # wait until every <video> has data for the sought frame (Player seeks on mount)
         pg.wait_for_function("[...document.querySelectorAll('video')].every(v => v.readyState >= 2)", timeout=8000)
         pg.wait_for_timeout(400)
-        name = out / f's{int(n):02d}_p{float(pr):.2f}{"_ui" if ui else ""}.png'
+        name = out / (f't{float(spec[2:]):05.1f}' if pr is None else f's{int(n):02d}_p{float(pr):.2f}') 
+        name = name.with_name(name.name + ('_ui' if ui else '') + '.png')
         if ui:
             pg.screenshot(path=str(name))
         else:

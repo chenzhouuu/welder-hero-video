@@ -1,250 +1,345 @@
 {
-  "classes": {
-    "REAL_PROJECT_DATA": "Raw dataset content: photos, sensor logs, labels, manifest fields.",
-    "CURRENT_MODEL_OUTPUT": "Verbatim output of an implemented project component (teacher CoE, retrieval, TS analyzer labels, baseline VLM).",
-    "DERIVED_FROM_REAL_DATA": "Statistics computed by video/scripts from raw data; reproducible.",
-    "SYMBOLIC_KNOWLEDGE": "Entities, edges, acceptance criteria from the frozen kb-v1 index or its source documents.",
-    "INTENDED_SYSTEM_BEHAVIOR": "Workflow the integrated WELDER system is designed to perform; not an experimental result.",
-    "ILLUSTRATIVE_VISUALIZATION": "Labels, layouts, or animations that carry no scientific claim."
+ "classes": {
+  "REAL_PROJECT_DATA": "Raw dataset content: photos, sensor logs, labels, manifest fields.",
+  "CURRENT_MODEL_OUTPUT": "Verbatim output of an implemented project component (teacher CoE, retrieval, TS analyzer labels, baseline VLM).",
+  "DERIVED_FROM_REAL_DATA": "Statistics computed by video/scripts from raw data; reproducible.",
+  "SYMBOLIC_KNOWLEDGE": "Entities, edges, acceptance criteria from the frozen kb-v1 index or its source documents.",
+  "INTENDED_SYSTEM_BEHAVIOR": "Workflow the integrated WELDER system is designed to perform; not an experimental result.",
+  "ILLUSTRATIVE_VISUALIZATION": "Labels, layouts, or animations that carry no scientific claim."
+ },
+ "disclosure": "System vision demonstration using WELDER project data. Some reasoning and downstream capabilities illustrate intended system behavior.",
+ "elements": [
+  {
+   "path": "labels.*",
+   "class": "ILLUSTRATIVE_VISUALIZATION",
+   "source": "video specification",
+   "note": "Operator W017 / Station 04 / Part A1024 / Weld B087 / WPS-014 do not exist in the dataset; shown as traceability labels only."
   },
-  "disclosure": "System vision demonstration using WELDER project data. Some reasoning and downstream capabilities illustrate intended system behavior.",
+  {
+   "path": "raw_data.subdir",
+   "class": "REAL_PROJECT_DATA",
+   "source": "intel_robotic_welding_dataset/manifest.csv row for 03-15-23-0080-05"
+  },
+  {
+   "path": "raw_data.ground_truth_label",
+   "class": "REAL_PROJECT_DATA",
+   "source": "manifest CATEGORY = Undercut (dataset README: intended defect type, no post-weld expert validation)"
+  },
+  {
+   "path": "raw_data.image.plate_view",
+   "class": "DERIVED_FROM_REAL_DATA",
+   "source": "original photo with the printed part-number label repainted by research/destick_photos.py (Grounding DINO + LaMa); pixels of the bead untouched",
+   "script": "video/scripts/destick_hero.py"
+  },
+  {
+   "path": "raw_data.image.bead_strip",
+   "class": "DERIVED_FROM_REAL_DATA",
+   "source": "research/detector_check/run200/crops_gold_nosticker/180_Undercut.jpg (hand-picked gold box, label inpainted)"
+  },
+  {
+   "path": "raw_data.image.bead_oblique",
+   "class": "DERIVED_FROM_REAL_DATA",
+   "source": "research/detector_check/views/crops_nosticker/168_2_Undercut.jpg"
+  },
+  {
+   "path": "raw_data.signals.*",
+   "class": "REAL_PROJECT_DATA",
+   "source": "03-15-23-0080-05.csv, all 309 rows, six channels, exported by video/scripts (hero-signals.json)"
+  },
+  {
+   "path": "raw_data.context.joint|thickness_mm|material|nominal_*",
+   "class": "REAL_PROJECT_DATA",
+   "source": "manifest columns WELD_TYPE, THICKNESS_MM, STEEL_TYPE, CURRENT_A, VOLTAGE_V, GAS_BAR, ROBOT_SPEED_CPM"
+  },
+  {
+   "path": "raw_data.context.process",
+   "class": "REAL_PROJECT_DATA",
+   "source": "dataset README (CO2 MAG, robotic cell)"
+  },
+  {
+   "path": "neural_observations.visual.defect",
+   "class": "INTENDED_SYSTEM_BEHAVIOR",
+   "source": "the visual sentinel is shown emitting the ground-truth class; the implemented baseline VLM (Intel 2B LoRA) answered 'Spatter' on this weld (video/docs/vlm_03-15-23-0080-05_*.md) and that result is not shown in the video",
+   "note": "never presented as a measured accuracy"
+  },
+  {
+   "path": "neural_observations.visual.location|morphology|source_statement",
+   "class": "CURRENT_MODEL_OUTPUT",
+   "source": "research/p8_mve/coe.jsonl idx 168, coe.visual_evidence[0..1] (teacher gpt-5.6-terra, label-guided, verifier status pass)"
+  },
+  {
+   "path": "neural_observations.process.current|voltage|wire_feed|gas.*_mean*",
+   "class": "DERIVED_FROM_REAL_DATA",
+   "source": "arc-on (I > 5 A) means and plateau statistics from the raw CSV; video/docs/ts_03-15-23-0080-05.json and video/docs/video-data-inventory.md §2"
+  },
+  {
+   "path": "neural_observations.process.*.trend",
+   "class": "CURRENT_MODEL_OUTPUT",
+   "source": "research/ts_analyzer.py trend labels (deterministic analyzer)"
+  },
+  {
+   "path": "neural_observations.process.instability_windows|dropouts",
+   "class": "CURRENT_MODEL_OUTPUT",
+   "source": "research/ts_analyzer.py instability windows (rolling sigma >= 3x median); both windows coincide with arc start/stop"
+  },
+  {
+   "path": "neural_observations.process.arc_stability|process_integrity|*.state",
+   "class": "DERIVED_FROM_REAL_DATA",
+   "source": "state words assigned by comparing plateau CV to the good-weld reference (current CV 0.039 <= 0.116 p95; voltage CV 0.028 <= 0.119 p95); the 'neural' process sentinel that would emit them is INTENDED_SYSTEM_BEHAVIOR",
+   "script": "video/scripts/measure_process.py"
+  },
+  {
+   "path": "neural_observations.process.reference",
+   "class": "DERIVED_FROM_REAL_DATA",
+   "source": "video/docs/process_stats.csv, good fillet Fe410 welds n=140"
+  },
+  {
+   "path": "symbolic_context.wps",
+   "class": "ILLUSTRATIVE_VISUALIZATION",
+   "source": "no WPS exists in the dataset"
+  },
+  {
+   "path": "symbolic_context.wps_window",
+   "class": "DERIVED_FROM_REAL_DATA",
+   "source": "p5-p95 of per-weld arc-on means over good fillet Fe410 welds; presented as the window a WPS would carry"
+  },
+  {
+   "path": "symbolic_context.acceptance",
+   "class": "SYMBOLIC_KNOWLEDGE",
+   "source": "kb-v1 ACCEPTANCE_CRITERION entities: BS EN ISO 5817 | UNDERCUT | STRINGENT/MODERATE | T > 3 MM; AWS D1.1 | UNDERCUT | LIMIT 1 MM (extracted from TWI Job Knowledge text, not from the standards themselves)"
+  },
+  {
+   "path": "symbolic_knowledge.kb",
+   "class": "REAL_PROJECT_DATA",
+   "source": "research/kb_graphrag/runs/kb-v1/ARCHIVE_INFO.json, output/entities.parquet (4986), relationships.parquet (9855)"
+  },
+  {
+   "path": "symbolic_knowledge.defect_entity|cause_edges|remedy_edges|no_edge",
+   "class": "SYMBOLIC_KNOWLEDGE",
+   "source": "kb-v1 relationships.parquet rows with target UNDERCUT; descriptions quoted verbatim (truncated); ARC INSTABILITY entity exists (degree 15) with no edge to UNDERCUT, checked 2026-09-02"
+  },
+  {
+   "path": "symbolic_knowledge.retrieved_units|retrieval_query",
+   "class": "CURRENT_MODEL_OUTPUT",
+   "source": "research/p8_mve/evidence.jsonl idx 168, retrievals[0]"
+  },
+  {
+   "path": "reasoning.trigger",
+   "class": "INTENDED_SYSTEM_BEHAVIOR",
+   "source": "fast/slow routing on inconsistency is the designed behavior; the two observed states are DERIVED_FROM_REAL_DATA"
+  },
+  {
+   "path": "reasoning.candidate_hypotheses[*].name|mechanism|predicts",
+   "class": "SYMBOLIC_KNOWLEDGE",
+   "source": "hypothesis names are kb-v1 cause entities (WELDING CURRENT, TRAVEL SPEED TOO FAST, INCORRECT GUN ANGLE / TORCH ANGLE, ARC INSTABILITY); mechanisms from the edge descriptions"
+  },
+  {
+   "path": "reasoning.candidate_hypotheses[*].evidence",
+   "class": "DERIVED_FROM_REAL_DATA",
+   "source": "plateau statistics vs. reference window; kb-v1 edge presence/absence"
+  },
+  {
+   "path": "reasoning.candidate_hypotheses[*].verdict|supported|plausible|weakened|explanation",
+   "class": "INTENDED_SYSTEM_BEHAVIOR",
+   "source": "hypothesis testing at inference time is the designed slow-layer behavior; verdicts were assigned by hand from the listed evidence and agree in rank order with the teacher's ranked causes (CURRENT_MODEL_OUTPUT)"
+  },
+  {
+   "path": "reasoning.teacher_ranked_causes|teacher_uncertainty",
+   "class": "CURRENT_MODEL_OUTPUT",
+   "source": "research/p8_mve/coe.jsonl idx 168, coe.plausible_causes / coe.uncertainty; confidences omitted in the video (self-reported, not measured)"
+  },
+  {
+   "path": "downstream_action.process|training",
+   "class": "INTENDED_SYSTEM_BEHAVIOR",
+   "source": "recommendation wording built from kb-v1 remedy edges (REDUCE WELDING CURRENT w9) and the supported hypothesis; no such module is implemented"
+  },
+  {
+   "path": "downstream_action.inspection",
+   "class": "SYMBOLIC_KNOWLEDGE",
+   "source": "kb-v1 ISO 5817 undercut limits"
+  },
+  {
+   "path": "history.undercut_welds_same_cell|sessions|date|median_*",
+   "class": "DERIVED_FROM_REAL_DATA",
+   "source": "video/docs/process_stats.csv: 140 Fe410 undercut welds in 7 sessions dated 2023-03-15, all with arc-on mean current above 182 A",
+   "note": "the dataset induced undercut deliberately; presenting these welds as one station's history is ILLUSTRATIVE_VISUALIZATION of the aggregation step"
+  },
+  {
+   "path": "history.aggregation|pattern|training_focus",
+   "class": "INTENDED_SYSTEM_BEHAVIOR",
+   "source": "longitudinal memory and operator-support feedback are designed capabilities"
+  },
+  {
+   "path": "scene1.arc_video",
+   "class": "REAL_PROJECT_DATA",
+   "source": "03-15-23-0080-05.avi (dataset arc camera, 960×600, 30 fps, 34.8 s) transcoded to public/hero/arc_03-15-23-0080-05.webm; no frames altered",
+   "note": "video↔log alignment measured from frame brightness: video 6.1–29.5 s ↔ log 6.38–30.62 s (src/data/hero.ts)"
+  },
+  {
+   "path": "scene1-2.traces",
+   "class": "REAL_PROJECT_DATA",
+   "source": "hero-signals.json (all 309 rows); scene 2 bands = plateau rows 65–254; values 279 A / 17.4 V from docs/ts_03-15-23-0080-05.json"
+  },
+  {
+   "path": "scene2.finding.steady",
+   "class": "DERIVED_FROM_REAL_DATA",
+   "source": "plateau CV 0.039 (current) and 0.028 (voltage) vs p95 of good welds 0.116 / 0.119"
+  },
+  {
+   "path": "scene3.undercut_region",
+   "class": "ILLUSTRATIVE_VISUALIZATION",
+   "source": "src/data/marks.ts: a band along the lower toe, x 950–1245 of the 2000×900 front photo, following the teacher chain-of-evidence text; not a model output"
+  },
+  {
+   "path": "scene3.finding.undercut",
+   "class": "INTENDED_SYSTEM_BEHAVIOR",
+   "source": "ground-truth class shown as the fast layer's finding (see neural_observations.visual.defect)"
+  },
+  {
+   "path": "scene4.unexplained",
+   "class": "INTENDED_SYSTEM_BEHAVIOR",
+   "source": "routing on inconsistency between product and process findings"
+  },
+  {
+   "path": "scene5.causes",
+   "class": "SYMBOLIC_KNOWLEDGE",
+   "source": "kb-v1 cause entities ARC INSTABILITY (no edge to UNDERCUT), WELDING CURRENT (w8), TRAVEL SPEED TOO FAST (w9), INCORRECT GUN ANGLE (w9)"
+  },
+  {
+   "path": "scene5.window",
+   "class": "DERIVED_FROM_REAL_DATA",
+   "source": "119–182 A = p5–p95 of per-weld arc-on mean current, 140 good fillet Fe410 welds (docs/process_stats.csv)"
+  },
+  {
+   "path": "scene5.verdicts",
+   "class": "INTENDED_SYSTEM_BEHAVIOR",
+   "source": "rank order agrees with the teacher chain-of-evidence (excessive arc energy first)"
+  },
+  {
+   "path": "scene6.recommendation",
+   "class": "SYMBOLIC_KNOWLEDGE",
+   "source": "kb-v1 remedy edge REDUCE WELDING CURRENT (w9); 300 A = manifest CURRENT_A of the hero weld"
+  },
+  {
+   "path": "scene6.good_weld",
+   "class": "REAL_PROJECT_DATA",
+   "source": "good_weld_6_02-17-23_Fe410/02-17-23-0106-00 (VAL): 02-17-23-0106-00-signals.json, label-removed front photo hero/good_front_full.jpg; arc-on mean 134.8 A",
+   "note": "shown as a weld inside the window, not as a weld that followed the recommendation"
+  },
+  {
+   "path": "scene7.thumbnails",
+   "class": "ILLUSTRATIVE_VISUALIZATION",
+   "source": "live renders of scenes 1, 3, 5, 6"
+  }
+ ],
+ "not_shown_on_purpose": [
+  {
+   "item": "Intel baseline VLM answer 'Spatter' on the hero weld",
+   "why": "n=3 runs is not an evaluation; using it as a foil would overclaim"
+  },
+  {
+   "item": "teacher confidence values (0.94, 0.87, 0.90 ...)",
+   "why": "self-reported by the model, not measurements"
+  },
+  {
+   "item": "any accuracy, F1, or benchmark number",
+   "why": "none exists for the integrated system"
+  }
+ ],
+ "storyboard_v2": "2026-09-02 redesign: 7 scenes, docs/visual_grammar.md; scene-level entries above supplement the case-level entries",
+ "storyboard_v3": {
+  "note": "v3 (2026-09-02): one continuous timeline, src/story/. Entries below cover elements new in v3; earlier entries still apply where the same element is reused (photo, log, kb-v1 edges, labels).",
   "elements": [
-    {
-      "path": "labels.*",
-      "class": "ILLUSTRATIVE_VISUALIZATION",
-      "source": "video specification",
-      "note": "Operator W017 / Station 04 / Part A1024 / Weld B087 / WPS-014 do not exist in the dataset; shown as traceability labels only."
-    },
-    {
-      "path": "raw_data.subdir",
-      "class": "REAL_PROJECT_DATA",
-      "source": "intel_robotic_welding_dataset/manifest.csv row for 03-15-23-0080-05"
-    },
-    {
-      "path": "raw_data.ground_truth_label",
-      "class": "REAL_PROJECT_DATA",
-      "source": "manifest CATEGORY = Undercut (dataset README: intended defect type, no post-weld expert validation)"
-    },
-    {
-      "path": "raw_data.image.plate_view",
-      "class": "DERIVED_FROM_REAL_DATA",
-      "source": "original photo with the printed part-number label repainted by research/destick_photos.py (Grounding DINO + LaMa); pixels of the bead untouched",
-      "script": "video/scripts/destick_hero.py"
-    },
-    {
-      "path": "raw_data.image.bead_strip",
-      "class": "DERIVED_FROM_REAL_DATA",
-      "source": "research/detector_check/run200/crops_gold_nosticker/180_Undercut.jpg (hand-picked gold box, label inpainted)"
-    },
-    {
-      "path": "raw_data.image.bead_oblique",
-      "class": "DERIVED_FROM_REAL_DATA",
-      "source": "research/detector_check/views/crops_nosticker/168_2_Undercut.jpg"
-    },
-    {
-      "path": "raw_data.signals.*",
-      "class": "REAL_PROJECT_DATA",
-      "source": "03-15-23-0080-05.csv, all 309 rows, six channels, exported by video/scripts (hero-signals.json)"
-    },
-    {
-      "path": "raw_data.context.joint|thickness_mm|material|nominal_*",
-      "class": "REAL_PROJECT_DATA",
-      "source": "manifest columns WELD_TYPE, THICKNESS_MM, STEEL_TYPE, CURRENT_A, VOLTAGE_V, GAS_BAR, ROBOT_SPEED_CPM"
-    },
-    {
-      "path": "raw_data.context.process",
-      "class": "REAL_PROJECT_DATA",
-      "source": "dataset README (CO2 MAG, robotic cell)"
-    },
-    {
-      "path": "neural_observations.visual.defect",
-      "class": "INTENDED_SYSTEM_BEHAVIOR",
-      "source": "the visual sentinel is shown emitting the ground-truth class; the implemented baseline VLM (Intel 2B LoRA) answered 'Spatter' on this weld (video/docs/vlm_03-15-23-0080-05_*.md) and that result is not shown in the video",
-      "note": "never presented as a measured accuracy"
-    },
-    {
-      "path": "neural_observations.visual.location|morphology|source_statement",
-      "class": "CURRENT_MODEL_OUTPUT",
-      "source": "research/p8_mve/coe.jsonl idx 168, coe.visual_evidence[0..1] (teacher gpt-5.6-terra, label-guided, verifier status pass)"
-    },
-    {
-      "path": "neural_observations.process.current|voltage|wire_feed|gas.*_mean*",
-      "class": "DERIVED_FROM_REAL_DATA",
-      "source": "arc-on (I > 5 A) means and plateau statistics from the raw CSV; video/docs/ts_03-15-23-0080-05.json and video/docs/video-data-inventory.md §2"
-    },
-    {
-      "path": "neural_observations.process.*.trend",
-      "class": "CURRENT_MODEL_OUTPUT",
-      "source": "research/ts_analyzer.py trend labels (deterministic analyzer)"
-    },
-    {
-      "path": "neural_observations.process.instability_windows|dropouts",
-      "class": "CURRENT_MODEL_OUTPUT",
-      "source": "research/ts_analyzer.py instability windows (rolling sigma >= 3x median); both windows coincide with arc start/stop"
-    },
-    {
-      "path": "neural_observations.process.arc_stability|process_integrity|*.state",
-      "class": "DERIVED_FROM_REAL_DATA",
-      "source": "state words assigned by comparing plateau CV to the good-weld reference (current CV 0.039 <= 0.116 p95; voltage CV 0.028 <= 0.119 p95); the 'neural' process sentinel that would emit them is INTENDED_SYSTEM_BEHAVIOR",
-      "script": "video/scripts/measure_process.py"
-    },
-    {
-      "path": "neural_observations.process.reference",
-      "class": "DERIVED_FROM_REAL_DATA",
-      "source": "video/docs/process_stats.csv, good fillet Fe410 welds n=140"
-    },
-    {
-      "path": "symbolic_context.wps",
-      "class": "ILLUSTRATIVE_VISUALIZATION",
-      "source": "no WPS exists in the dataset"
-    },
-    {
-      "path": "symbolic_context.wps_window",
-      "class": "DERIVED_FROM_REAL_DATA",
-      "source": "p5-p95 of per-weld arc-on means over good fillet Fe410 welds; presented as the window a WPS would carry"
-    },
-    {
-      "path": "symbolic_context.acceptance",
-      "class": "SYMBOLIC_KNOWLEDGE",
-      "source": "kb-v1 ACCEPTANCE_CRITERION entities: BS EN ISO 5817 | UNDERCUT | STRINGENT/MODERATE | T > 3 MM; AWS D1.1 | UNDERCUT | LIMIT 1 MM (extracted from TWI Job Knowledge text, not from the standards themselves)"
-    },
-    {
-      "path": "symbolic_knowledge.kb",
-      "class": "REAL_PROJECT_DATA",
-      "source": "research/kb_graphrag/runs/kb-v1/ARCHIVE_INFO.json, output/entities.parquet (4986), relationships.parquet (9855)"
-    },
-    {
-      "path": "symbolic_knowledge.defect_entity|cause_edges|remedy_edges|no_edge",
-      "class": "SYMBOLIC_KNOWLEDGE",
-      "source": "kb-v1 relationships.parquet rows with target UNDERCUT; descriptions quoted verbatim (truncated); ARC INSTABILITY entity exists (degree 15) with no edge to UNDERCUT, checked 2026-09-02"
-    },
-    {
-      "path": "symbolic_knowledge.retrieved_units|retrieval_query",
-      "class": "CURRENT_MODEL_OUTPUT",
-      "source": "research/p8_mve/evidence.jsonl idx 168, retrievals[0]"
-    },
-    {
-      "path": "reasoning.trigger",
-      "class": "INTENDED_SYSTEM_BEHAVIOR",
-      "source": "fast/slow routing on inconsistency is the designed behavior; the two observed states are DERIVED_FROM_REAL_DATA"
-    },
-    {
-      "path": "reasoning.candidate_hypotheses[*].name|mechanism|predicts",
-      "class": "SYMBOLIC_KNOWLEDGE",
-      "source": "hypothesis names are kb-v1 cause entities (WELDING CURRENT, TRAVEL SPEED TOO FAST, INCORRECT GUN ANGLE / TORCH ANGLE, ARC INSTABILITY); mechanisms from the edge descriptions"
-    },
-    {
-      "path": "reasoning.candidate_hypotheses[*].evidence",
-      "class": "DERIVED_FROM_REAL_DATA",
-      "source": "plateau statistics vs. reference window; kb-v1 edge presence/absence"
-    },
-    {
-      "path": "reasoning.candidate_hypotheses[*].verdict|supported|plausible|weakened|explanation",
-      "class": "INTENDED_SYSTEM_BEHAVIOR",
-      "source": "hypothesis testing at inference time is the designed slow-layer behavior; verdicts were assigned by hand from the listed evidence and agree in rank order with the teacher's ranked causes (CURRENT_MODEL_OUTPUT)"
-    },
-    {
-      "path": "reasoning.teacher_ranked_causes|teacher_uncertainty",
-      "class": "CURRENT_MODEL_OUTPUT",
-      "source": "research/p8_mve/coe.jsonl idx 168, coe.plausible_causes / coe.uncertainty; confidences omitted in the video (self-reported, not measured)"
-    },
-    {
-      "path": "downstream_action.process|training",
-      "class": "INTENDED_SYSTEM_BEHAVIOR",
-      "source": "recommendation wording built from kb-v1 remedy edges (REDUCE WELDING CURRENT w9) and the supported hypothesis; no such module is implemented"
-    },
-    {
-      "path": "downstream_action.inspection",
-      "class": "SYMBOLIC_KNOWLEDGE",
-      "source": "kb-v1 ISO 5817 undercut limits"
-    },
-    {
-      "path": "history.undercut_welds_same_cell|sessions|date|median_*",
-      "class": "DERIVED_FROM_REAL_DATA",
-      "source": "video/docs/process_stats.csv: 140 Fe410 undercut welds in 7 sessions dated 2023-03-15, all with arc-on mean current above 182 A",
-      "note": "the dataset induced undercut deliberately; presenting these welds as one station's history is ILLUSTRATIVE_VISUALIZATION of the aggregation step"
-    },
-    {
-      "path": "history.aggregation|pattern|training_focus",
-      "class": "INTENDED_SYSTEM_BEHAVIOR",
-      "source": "longitudinal memory and operator-support feedback are designed capabilities"
-    },
-    {
-      "path": "scene1.arc_video",
-      "class": "REAL_PROJECT_DATA",
-      "source": "03-15-23-0080-05.avi (dataset arc camera, 960×600, 30 fps, 34.8 s) transcoded to public/hero/arc_03-15-23-0080-05.webm; no frames altered",
-      "note": "video↔log alignment measured from frame brightness: video 6.1–29.5 s ↔ log 6.38–30.62 s (src/data/hero.ts)"
-    },
-    {
-      "path": "scene1-2.traces",
-      "class": "REAL_PROJECT_DATA",
-      "source": "hero-signals.json (all 309 rows); scene 2 bands = plateau rows 65–254; values 279 A / 17.4 V from docs/ts_03-15-23-0080-05.json"
-    },
-    {
-      "path": "scene2.finding.steady",
-      "class": "DERIVED_FROM_REAL_DATA",
-      "source": "plateau CV 0.039 (current) and 0.028 (voltage) vs p95 of good welds 0.116 / 0.119"
-    },
-    {
-      "path": "scene3.undercut_region",
-      "class": "ILLUSTRATIVE_VISUALIZATION",
-      "source": "src/data/marks.ts: a band along the lower toe, x 950–1245 of the 2000×900 front photo, following the teacher chain-of-evidence text; not a model output"
-    },
-    {
-      "path": "scene3.finding.undercut",
-      "class": "INTENDED_SYSTEM_BEHAVIOR",
-      "source": "ground-truth class shown as the fast layer's finding (see neural_observations.visual.defect)"
-    },
-    {
-      "path": "scene4.unexplained",
-      "class": "INTENDED_SYSTEM_BEHAVIOR",
-      "source": "routing on inconsistency between product and process findings"
-    },
-    {
-      "path": "scene5.causes",
-      "class": "SYMBOLIC_KNOWLEDGE",
-      "source": "kb-v1 cause entities ARC INSTABILITY (no edge to UNDERCUT), WELDING CURRENT (w8), TRAVEL SPEED TOO FAST (w9), INCORRECT GUN ANGLE (w9)"
-    },
-    {
-      "path": "scene5.window",
-      "class": "DERIVED_FROM_REAL_DATA",
-      "source": "119–182 A = p5–p95 of per-weld arc-on mean current, 140 good fillet Fe410 welds (docs/process_stats.csv)"
-    },
-    {
-      "path": "scene5.verdicts",
-      "class": "INTENDED_SYSTEM_BEHAVIOR",
-      "source": "rank order agrees with the teacher chain-of-evidence (excessive arc energy first)"
-    },
-    {
-      "path": "scene6.recommendation",
-      "class": "SYMBOLIC_KNOWLEDGE",
-      "source": "kb-v1 remedy edge REDUCE WELDING CURRENT (w9); 300 A = manifest CURRENT_A of the hero weld"
-    },
-    {
-      "path": "scene6.good_weld",
-      "class": "REAL_PROJECT_DATA",
-      "source": "good_weld_6_02-17-23_Fe410/02-17-23-0106-00 (VAL): 02-17-23-0106-00-signals.json, label-removed front photo hero/good_front_full.jpg; arc-on mean 134.8 A",
-      "note": "shown as a weld inside the window, not as a weld that followed the recommendation"
-    },
-    {
-      "path": "scene7.thumbnails",
-      "class": "ILLUSTRATIVE_VISUALIZATION",
-      "source": "live renders of scenes 1, 3, 5, 6"
-    }
-  ],
-  "not_shown_on_purpose": [
-    {
-      "item": "Intel baseline VLM answer 'Spatter' on the hero weld",
-      "why": "n=3 runs is not an evaluation; using it as a foil would overclaim"
-    },
-    {
-      "item": "teacher confidence values (0.94, 0.87, 0.90 ...)",
-      "why": "self-reported by the model, not measurements"
-    },
-    {
-      "item": "any accuracy, F1, or benchmark number",
-      "why": "none exists for the integrated system"
-    }
-  ],
-  "storyboard_v2": "2026-09-02 redesign: 7 scenes, docs/visual_grammar.md; scene-level entries above supplement the case-level entries"
+   {
+    "path": "chapter2.ticker",
+    "class": "REAL_PROJECT_DATA",
+    "source": "src/data/02-17-23-010{1,2,3}-00-signals.json (good_weld_6_02-17-23_Fe410)",
+    "note": "Three real good welds' logs pass the fast check under illustrative IDs Weld 084–086."
+   },
+   {
+    "path": "chapter2.sliding_window",
+    "class": "INTENDED_SYSTEM_BEHAVIOR",
+    "source": "video design",
+    "note": "The 4 s window and the ticks depict online screening; the per-window verdicts are not a recorded model output. The end-of-weld words \"process nominal\" are the TS analyzer output (docs/ts_03-15-23-0080-05.json: current STEADY, arc_stability NOMINAL, process_integrity NOMINAL)."
+   },
+   {
+    "path": "chapter3.bead_box",
+    "class": "CURRENT_MODEL_OUTPUT",
+    "source": "SAM 3.1 (Meta reference stack, bf16), prompt \"a weld bead\", scripts/sam_bead_mask.py; src/data/sam31.json",
+    "note": "Top candidate box [711.3, 288.1, 1271.8, 333.0], score 0.742 on the label-removed front photo. The same image in research/detector_check/full/sam31_full.jsonl gives [712.5, 288.6, 1275.4, 334.0], 0.727."
+   },
+   {
+    "path": "chapter3.bead_mask",
+    "class": "CURRENT_MODEL_OUTPUT",
+    "source": "public/hero/plate_front_full_sam31_mask.png",
+    "note": "Binary mask of the top candidate (20,171 px). Drawn as a SAM-style ring + fill."
+   },
+   {
+    "path": "chapter3.undercut_region",
+    "class": "ILLUSTRATIVE_VISUALIZATION",
+    "source": "src/data/marks.ts + src/data/bead-edge.json",
+    "note": "Band along the REAL lower edge of the SAM mask over x 990–1250 (middle-to-right, per the teacher chain-of-evidence). Extent and thickness are drawn; no defect-segmentation output exists for this weld."
+   },
+   {
+    "path": "chapter3.step_words",
+    "class": "ILLUSTRATIVE_VISUALIZATION",
+    "source": "video design",
+    "note": "raw image / bead grounding / bead segmentation / defect region name the CV steps shown; the marker is a SAM-style prompt disc, not a recorded click."
+   },
+   {
+    "path": "chapter4.disagreement",
+    "class": "INTENDED_SYSTEM_BEHAVIOR",
+    "source": "video design",
+    "note": "Routing rule: product abnormal (vision) + process nominal (TS analyzer) → slow layer. Both inputs are real outputs for this weld."
+   },
+   {
+    "path": "chapter5.hypotheses",
+    "class": "SYMBOLIC_KNOWLEDGE",
+    "source": "kb-v1 cause edges into UNDERCUT (hero-case.json symbolic_knowledge)",
+    "note": "H2 torch angle / travel = INCORRECT GUN ANGLE (w9) + TRAVEL SPEED TOO FAST (w9); H3 heat input = WELDING CURRENT (w8) + EXCESSIVE VOLTAGE (w9); H1 arc instability has no edge to UNDERCUT in kb-v1 (hero-case.json symbolic_knowledge.no_edge)."
+   },
+   {
+    "path": "chapter5.expects_observed_verdict",
+    "class": "INTENDED_SYSTEM_BEHAVIOR",
+    "source": "video design over measured evidence",
+    "note": "Observed lines are measured (plateau CV 0.039 current / 0.028 voltage; groove on the lower toe only; 279 A plateau vs 119–182 A window; 17.6 V inside 17.5–22.3 V). The verdict words and the chapter-6 ranking are intended behaviour, not a recorded reasoner output."
+   },
+   {
+    "path": "chapter6.record",
+    "class": "INTENDED_SYSTEM_BEHAVIOR",
+    "source": "video design",
+    "note": "\"Weld 087 · undercut · torch / travel\" — the record format is a design choice."
+   },
+   {
+    "path": "chapter7.history_photos",
+    "class": "REAL_PROJECT_DATA",
+    "source": "public/hero/history/*.jpg (label removed by the project pipeline)",
+    "note": "good_weld_6_02-17-23_Fe410 parts 0104, 0105 (good) and undercut_4_03-15-23_Fe410 parts 0062, 0070 (undercut); bead framings from SAM 3.1 top boxes on those views."
+   },
+   {
+    "path": "chapter7.operator_and_pattern",
+    "class": "ILLUSTRATIVE_VISUALIZATION",
+    "source": "video design",
+    "note": "The dataset has no operator field; the assignment of five welds to Operator W017 and the stored mechanism marks on Weld 051/062 are illustrative. \"3 of 5 welds\" counts the illustrative set."
+   },
+   {
+    "path": "chapter8.schematic",
+    "class": "ILLUSTRATIVE_VISUALIZATION",
+    "source": "src/components/TorchSchematic.tsx",
+    "note": "Textbook T-fillet cross-section; observed 28° / recommended 45° work angle and the travel regularity are drawn, not measured (no torch or travel sensor)."
+   },
+   {
+    "path": "chapter8.target_weld",
+    "class": "REAL_PROJECT_DATA",
+    "source": "public/hero/good_front_full.jpg (02-17-23-0106-00)",
+    "note": "A real good weld shown as the target; no claim that it followed the recommendation."
+   },
+   {
+    "path": "chapter9.loop",
+    "class": "INTENDED_SYSTEM_BEHAVIOR",
+    "source": "video design",
+    "note": "Weld 088–092 and the divert of 090 depict the routing policy; thumbnails reuse the chapter-7 photos."
+   }
+  ]
+ }
 }

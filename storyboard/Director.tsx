@@ -7,8 +7,10 @@ import {FPS, HEIGHT, WIDTH, framesOf} from '@/lib/scene';
 const readParams = (): {n: number; p: number} => {
   const q = new URLSearchParams(window.location.search);
   const n = Number(q.get('scene') ?? '1');
-  const p = Number(q.get('p') ?? '0');
-  return {n: Number.isFinite(n) ? n : 1, p: Number.isFinite(p) ? Math.min(1, Math.max(0, p)) : 0};
+  const scene = sceneByN(Number.isFinite(n) ? n : 1);
+  const tSec = q.get('t');
+  const p = tSec !== null ? Number(tSec) / scene.durationSec : Number(q.get('p') ?? '0');
+  return {n: scene.n, p: Number.isFinite(p) ? Math.min(1, Math.max(0, p)) : 0};
 };
 
 const writeParams = (n: number, p: number): void => {
@@ -92,8 +94,16 @@ export const Director: React.FC = () => {
         ref.current?.toggle();
       } else if (e.key === 'ArrowLeft') step(e.shiftKey ? -10 : -1);
       else if (e.key === 'ArrowRight') step(e.shiftKey ? 10 : 1);
-      else if (e.key === '[') goScene(n - 1);
-      else if (e.key === ']') goScene(n + 1);
+      else if (e.key === '[' || e.key === ']') {
+        const ch = scene.chapters ?? [];
+        if (ch.length) {
+          const cur = ref.current?.getCurrentFrame() ?? frame;
+          const tt = cur / FPS;
+          const idx = ch.findIndex((c, i) => tt >= c.at - 1e-6 && tt < (ch[i + 1]?.at ?? scene.durationSec));
+          const to = ch[Math.min(ch.length - 1, Math.max(0, idx + (e.key === ']' ? 1 : -1)))];
+          seekP(to.at / scene.durationSec);
+        } else goScene(n + (e.key === ']' ? 1 : -1));
+      }
       else if (e.key === 'g') setGuides((v) => !v);
       else if (e.key === 'n') setNotes((v) => !v);
       else if (e.key === 'Home') seekP(0);
@@ -101,18 +111,30 @@ export const Director: React.FC = () => {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [n, step, goScene, seekP]);
+  }, [n, step, goScene, seekP, scene, frame]);
 
   const t = frame / FPS;
+  const chapter = (scene.chapters ?? []).filter((c) => c.at <= t + 1e-6).pop();
   return (
     <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
       <div className="bar top">
         <strong style={{marginRight: 8}}>WELDER storyboard</strong>
-        {SCENES.map((s) => (
-          <button key={s.id} className={s.n === n ? 'active' : ''} onClick={() => goScene(s.n)} title={s.message}>
-            {s.n} {s.title}
-          </button>
-        ))}
+        {SCENES.length > 1
+          ? SCENES.map((s) => (
+              <button key={s.id} className={s.n === n ? 'active' : ''} onClick={() => goScene(s.n)} title={s.message}>
+                {s.n} {s.title}
+              </button>
+            ))
+          : null}
+        {(scene.chapters ?? []).map((c, i, all) => {
+          const next = all[i + 1]?.at ?? scene.durationSec;
+          const active = t >= c.at && t < next;
+          return (
+            <button key={c.n} className={active ? 'active' : ''} onClick={() => seekP(c.at / scene.durationSec)} title={c.message}>
+              {c.n} {c.title}
+            </button>
+          );
+        })}
         <span style={{flex: 1}} />
         <button aria-pressed={guides} onClick={() => setGuides((v) => !v)}>guides</button>
         <button aria-pressed={notes} onClick={() => setNotes((v) => !v)}>notes</button>
@@ -148,10 +170,11 @@ export const Director: React.FC = () => {
         {notes ? (
           <div className="notes">
             <h3>
-              Scene {scene.n} · {scene.title}
+              {scene.title}
+              {chapter ? ` · ${chapter.n} ${chapter.title}` : ''}
             </h3>
             <p>
-              <em>{scene.message}</em>
+              <em>{chapter ? chapter.message : scene.message}</em>
             </p>
             {scene.notes.length ? (
               <ul>
@@ -191,10 +214,10 @@ export const Director: React.FC = () => {
           <button onClick={() => step(-1)}>−1f</button>
           <button onClick={() => step(1)}>+1f</button>
           <span className="readout" style={{marginLeft: 8}}>
-            p = {progress.toFixed(3)} · {t.toFixed(2)} s / {scene.durationSec} s · frame {frame} / {frames - 1}
+            t = {t.toFixed(2)} s / {scene.durationSec} s · p = {progress.toFixed(3)} · frame {frame} / {frames - 1}
           </span>
           <span style={{flex: 1}} />
-          <span className="help">?director=1&scene={n}&p={progress.toFixed(2)}</span>
+          <span className="help">?director=1&t={t.toFixed(1)}</span>
         </div>
       </div>
     </div>
