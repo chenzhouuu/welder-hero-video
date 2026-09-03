@@ -1,6 +1,6 @@
 import React from 'react';
 import {GroundingBox, MaskFill} from '../../components/Grounding';
-import {Marker, Region, Value} from '../../components/marks';
+import {Marker, Region} from '../../components/marks';
 import {asset} from '../../lib/asset';
 import {tokens} from '../../styles/tokens';
 import {lin, on, off, win} from '../../lib/track';
@@ -41,20 +41,5 @@ export const visionPhotoMarks = (t: number, scale: number): React.ReactNode => {
   );
 };
 
-/** Frame-space words for chapter 3: the CV step names, bottom-left, small, white on the photo. */
-export const VisionPart: React.FC<{t: number}> = ({t}) => {
-  const s = t - V;
-  const steps: [string, number, number][] = [
-    ['raw image', 0.3, BEATS.box],
-    ['bead grounding', BEATS.box, BEATS.mask],
-    ['bead segmentation', BEATS.mask, BEATS.marker],
-    ['defect region', BEATS.marker, T.disagree.t0 - V],
-  ];
-  return (
-    <>
-      {steps.map(([w, a, b]) => (
-        <Value key={w} x={48} y={1080 - 150} text={w} size={26} hue="rgba(255,255,255,0.85)" opacity={win(s, a, a + 0.25, b - 0.15, b)} />
-      ))}
-    </>
-  );
-};
+/** Chapter 3 leaves no words on the frame besides the model's own labels; kept as a hook for the review. */
+export const VisionPart: React.FC<{t: number}> = () => null;

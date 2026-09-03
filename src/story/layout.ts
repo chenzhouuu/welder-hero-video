@@ -37,21 +37,32 @@ export const laneRects = (t: number): {lanes: Lane[]; opacity: number[]; ink: st
   const onDark = t < a + 0.75 || (t >= T.vision.t0 && t < T.disagree.t0 + 0.5);
   const ink = onDark ? 'rgba(255,255,255,0.92)' : tokens.ink;
   const inVision = t >= T.vision.t0;
-  // after the cut to the photo, the current lane is a thin strip at the bottom, then rises into the split view
-  const cur: Lane = inVision
-    ? {
-        x: track(t, [[T.disagree.t0, 96], [T.disagree.t0 + 1.5, 160]]),
-        y: track(t, [[T.disagree.t0, 1000], [T.disagree.t0 + 1.5, 660], [T.reason.t0, 660], [T.reason.t0 + 1, 760]]),
-        w: track(t, [[T.disagree.t0, 1580], [T.disagree.t0 + 1.5, 1600]]),
-        h: track(t, [[T.disagree.t0, 56], [T.disagree.t0 + 1.5, 330], [T.reason.t0, 330], [T.reason.t0 + 1, 250]]),
-        tRange: LANE_T,
-        vRange: CHANNELS[0].v,
-      }
-    : {x, y: top, w, h: laneH, tRange: LANE_T, vRange: CHANNELS[0].v};
-  const lanes: Lane[] = [cur, ...CHANNELS.slice(1).map((c, i) => ({x, y: top + (i + 1) * (laneH + gap), w, h: laneH, tRange: LANE_T, vRange: c.v}))];
-  const curOp = inVision ? track(t, [[T.vision.t0, 0.55], [T.disagree.t0, 0.55], [T.disagree.t0 + 1, 1], [T.memory.t0, 1], [T.memory.t0 + 0.8, 0]]) : 1;
-  const otherOp = inVision ? 0 : 1;
-  return {lanes, opacity: [curOp, otherOp, otherOp], ink, unitOpacity: inVision ? 0 : 1};
+  if (!inVision) {
+    const lanes: Lane[] = CHANNELS.map((c, i) => ({x, y: top + i * (laneH + gap), w, h: laneH, tRange: LANE_T, vRange: c.v}));
+    return {lanes, opacity: [1, 1, 1], ink, unitOpacity: 1};
+  }
+  // after the cut to the photo: the current lane is a thin strip at the bottom, then rises into
+  // the split view; the voltage lane joins it there (the reasoning tests both), feed stays hidden
+  const d = T.disagree.t0;
+  const r = T.reason.t0;
+  const lx = track(t, [[d, 96], [d + 1.5, 160]]);
+  const lw = track(t, [[d, 1580], [d + 1.5, 1600]]);
+  const cur: Lane = {
+    x: lx, w: lw,
+    y: track(t, [[d, 1000], [d + 1.5, 640], [r, 640], [r + 1, 690]]),
+    h: track(t, [[d, 56], [d + 1.5, 250], [r, 250], [r + 1, 190]]),
+    tRange: LANE_T, vRange: CHANNELS[0].v,
+  };
+  const volt: Lane = {
+    x: lx, w: lw,
+    y: track(t, [[d, 1120], [d + 1.5, 912], [r, 912], [r + 1, 905]]),
+    h: 100,
+    tRange: LANE_T, vRange: CHANNELS[1].v,
+  };
+  const feed: Lane = {x: lx, w: lw, y: 1200, h: 60, tRange: LANE_T, vRange: CHANNELS[2].v};
+  const curOp = track(t, [[T.vision.t0, 0.55], [d, 0.55], [d + 1, 1], [T.memory.t0, 1], [T.memory.t0 + 0.8, 0]]);
+  const voltOp = track(t, [[d + 0.4, 0], [d + 1.5, 1], [T.memory.t0, 1], [T.memory.t0 + 0.8, 0]]);
+  return {lanes: [cur, volt, feed], opacity: [curOp, voltOp, 0], ink, unitOpacity: track(t, [[d + 0.8, 0], [d + 1.5, 1], [T.memory.t0, 1], [T.memory.t0 + 0.5, 0]])};
 };
 
 /** Bead framings of the 2000×900 front photo for each photo-box aspect. */
@@ -59,7 +70,7 @@ export const VIEW_PLATE: View = {x: 470, y: 45, w: 1040, h: 585};
 export const VIEW_BEAD_16x9: View = {x: 620, y: 128, w: 740, h: 416};
 export const VIEW_BEAD_SPLIT: View = {x: 600, y: 229, w: 780, h: 163}; // 1920×400
 export const VIEW_BEAD_BAND: View = {x: 600, y: 240, w: 780, h: 138}; // 1920×340
-export const VIEW_THUMB: View = {x: 560, y: 190, w: 860, h: 387}; // 300×135 thumbnails (2.22:1)
+export const VIEW_THUMB: View = {x: 560, y: 128, w: 860, h: 387}; // 400×180 thumbnails (2.22:1)
 
 /** The hero photo: full frame in chapter 3, a band above the trace in 4–6, a thumbnail in 7. */
 export const photoRect = (t: number): Rect =>
@@ -71,7 +82,10 @@ export const photoRect = (t: number): Rect =>
     [T.memory.t0, {x: 0, y: 0, w: 1920, h: 340}],
     [T.memory.t0 + 1.5, HERO_THUMB],
   ]);
-export const HERO_THUMB: Rect = {x: 1470, y: 560, w: 300, h: 135};
+/** 4×2 grid of the operator's welds (chapter 7): 400×180 thumbnails; the hero lands in the last slot. */
+export const GRID = {x0: 100, y0: 330, w: 400, h: 180, gapX: 40, rowGap: 80};
+export const gridSlot = (i: number): Rect => ({x: GRID.x0 + (i % 4) * (GRID.w + GRID.gapX), y: GRID.y0 + Math.floor(i / 4) * (GRID.h + GRID.rowGap), w: GRID.w, h: GRID.h});
+export const HERO_THUMB: Rect = gridSlot(7);
 
 const lerpView = (a: View, b: View, k: number): View => ({x: a.x + (b.x - a.x) * k, y: a.y + (b.y - a.y) * k, w: a.w + (b.w - a.w) * k, h: a.h + (b.h - a.h) * k});
 export const photoView = (t: number): View => {

@@ -3,7 +3,7 @@
 Neural-Symbolic AI for the Next Generation of Smart Manufacturing — a hero video for the WELDER
 project page, built with Remotion + React + TypeScript from real project data.
 
-**Current state: storyboard v3, under design review.** The video is one continuous 88 s story
+**Current state: storyboard v3.1, under design review.** The video is one continuous 90 s story
 (one weld through the whole system) that can be scrubbed in the interactive storyboard;
 nothing has been rendered from it yet. The rendered MP4 in `out/` and `demo/` is the earlier
 v1 (11 scenes, 106 s), kept for reference.

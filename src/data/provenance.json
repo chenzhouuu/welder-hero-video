@@ -248,19 +248,19 @@
  ],
  "storyboard_v2": "2026-09-02 redesign: 7 scenes, docs/visual_grammar.md; scene-level entries above supplement the case-level entries",
  "storyboard_v3": {
-  "note": "v3 (2026-09-02): one continuous timeline, src/story/. Entries below cover elements new in v3; earlier entries still apply where the same element is reused (photo, log, kb-v1 edges, labels).",
+  "note": "v3 (2026-09-02): one continuous timeline, src/story/. Entries below cover elements new in v3; earlier entries still apply where the same element is reused (photo, log, kb-v1 edges, labels). v3.1 (2026-09-03): wording \"process stable\"; three mechanisms tested on the evidence with verdicts weakened / plausible / likely; eight-weld operator history; qualitative schematic without angle values.",
   "elements": [
    {
     "path": "chapter2.ticker",
     "class": "REAL_PROJECT_DATA",
-    "source": "src/data/02-17-23-010{1,2,3}-00-signals.json (good_weld_6_02-17-23_Fe410)",
-    "note": "Three real good welds' logs pass the fast check under illustrative IDs Weld 084–086."
+    "source": "src/data/02-17-23-010{1,2,3,4,5,6,8,9}-00-signals.json (good_weld_6_02-17-23_Fe410)",
+    "note": "Eight real good welds' logs pass the fast check under illustrative IDs Weld 079–086."
    },
    {
     "path": "chapter2.sliding_window",
     "class": "INTENDED_SYSTEM_BEHAVIOR",
     "source": "video design",
-    "note": "The 4 s window and the ticks depict online screening; the per-window verdicts are not a recorded model output. The end-of-weld words \"process nominal\" are the TS analyzer output (docs/ts_03-15-23-0080-05.json: current STEADY, arc_stability NOMINAL, process_integrity NOMINAL)."
+    "note": "The 4 s window and the ticks depict online screening; the per-window verdicts are not a recorded model output. The end-of-weld words \"process stable\" are the TS analyzer output (docs/ts_03-15-23-0080-05.json: current STEADY, arc_stability NOMINAL, process_integrity NOMINAL)."
    },
    {
     "path": "chapter3.bead_box",
@@ -299,10 +299,10 @@
     "note": "H2 torch angle / travel = INCORRECT GUN ANGLE (w9) + TRAVEL SPEED TOO FAST (w9); H3 heat input = WELDING CURRENT (w8) + EXCESSIVE VOLTAGE (w9); H1 arc instability has no edge to UNDERCUT in kb-v1 (hero-case.json symbolic_knowledge.no_edge)."
    },
    {
-    "path": "chapter5.expects_observed_verdict",
+    "path": "chapter5.edges_and_verdicts",
     "class": "INTENDED_SYSTEM_BEHAVIOR",
     "source": "video design over measured evidence",
-    "note": "Observed lines are measured (plateau CV 0.039 current / 0.028 voltage; groove on the lower toe only; 279 A plateau vs 119–182 A window; 17.6 V inside 17.5–22.3 V). The verdict words and the chapter-6 ranking are intended behaviour, not a recorded reasoner output."
+    "note": "Edge words are the symbolic relations (mechanism → expected evidence). Evidence highlights are measured: plateau CV 0.039 current / 0.028 voltage; groove on the lower toe only; 279 A plateau vs the 119–182 A window (p5–p95 of 140 good welds); 17.6 V inside 17.5–22.3 V. The verdict words (weakened / plausible / likely) and the chapter-6 ranking are intended behaviour, not a recorded reasoner output."
    },
    {
     "path": "chapter6.record",
@@ -314,19 +314,19 @@
     "path": "chapter7.history_photos",
     "class": "REAL_PROJECT_DATA",
     "source": "public/hero/history/*.jpg (label removed by the project pipeline)",
-    "note": "good_weld_6_02-17-23_Fe410 parts 0104, 0105 (good) and undercut_4_03-15-23_Fe410 parts 0062, 0070 (undercut); bead framings from SAM 3.1 top boxes on those views."
+    "note": "good_weld_6_02-17-23_Fe410 parts 0101, 0102, 0104, 0105 (good) and undercut_4_03-15-23_Fe410 parts 0062, 0064, 0070 (undercut); bead framings from SAM 3.1 top boxes on those views."
    },
    {
     "path": "chapter7.operator_and_pattern",
     "class": "ILLUSTRATIVE_VISUALIZATION",
     "source": "video design",
-    "note": "The dataset has no operator field; the assignment of five welds to Operator W017 and the stored mechanism marks on Weld 051/062 are illustrative. \"3 of 5 welds\" counts the illustrative set."
+    "note": "The dataset has no operator field; the assignment of eight welds to Operator W017 and the stored mechanism marks on Weld 048/051/062 are illustrative. \"4 of 8 welds\" counts the illustrative set."
    },
    {
     "path": "chapter8.schematic",
     "class": "ILLUSTRATIVE_VISUALIZATION",
     "source": "src/components/TorchSchematic.tsx",
-    "note": "Textbook T-fillet cross-section; observed 28° / recommended 45° work angle and the travel regularity are drawn, not measured (no torch or travel sensor)."
+    "note": "Qualitative T-fillet cross-section: observed (torch aimed at the bottom plate, uneven travel) vs recommended (symmetric work angle, steady travel). No angle values are written; no torch or travel sensor exists."
    },
    {
     "path": "chapter8.target_weld",
@@ -338,7 +338,13 @@
     "path": "chapter9.loop",
     "class": "INTENDED_SYSTEM_BEHAVIOR",
     "source": "video design",
-    "note": "Weld 088–092 and the divert of 090 depict the routing policy; thumbnails reuse the chapter-7 photos."
+    "note": "Weld 088–095 and the divert + dwell of 090 depict the routing policy; thumbnails reuse the chapter-7 photos."
+   },
+   {
+    "path": "chapter5.stable_ne_optimal",
+    "class": "SYMBOLIC_KNOWLEDGE",
+    "source": "video design over docs/process_stats.csv",
+    "note": "\"stable ≠ optimal\": the fast monitor establishes stability, not that the setpoint lies inside the qualified window; the window is p5–p95 of the good-weld population."
    }
   ]
  }
