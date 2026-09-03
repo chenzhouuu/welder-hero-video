@@ -9,3 +9,5 @@ out/*
 public/hero/destick/
 __pycache__/
 *.log
+.vite/
+.claude/

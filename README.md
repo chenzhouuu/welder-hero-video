@@ -1,69 +1,59 @@
 # WELDER hero video
 
-Neural-Symbolic AI for the Next Generation of Smart Manufacturing — a 106 s, 1920×1080,
-30 fps, silent hero video built with Remotion + React + TypeScript from WELDER project data.
+Neural-symbolic weld diagnosis, shown as a CVPR-style model demo. Remotion + React +
+TypeScript; 1920×1080, 30 fps, silent. Redesigned 2026-09-02 from studied academic demos
+(`docs/reference_analysis.md`) under a written visual grammar (`docs/visual_grammar.md`).
+
+**Status: interactive storyboard under design review. The final video has not been rendered.**
 
 ## Layout
 
 ```
 video/
 ├── docs/
-│   ├── video-data-inventory.md   what data exists, what was measured, what is intended
-│   ├── storyboard.md             per-scene research message, evidence, provenance, transition
-│   ├── review.md                 four-role critique and the fixes it produced
-│   ├── process_stats.csv         per-weld arc-on statistics (Good / Undercut / …)
-│   ├── ts_03-15-23-0080-05.json  deterministic TS-analyzer output for the hero weld
-│   └── vlm_*.md                  verbatim Intel baseline VLM reports (recorded, not shown)
-├── public/hero/                  label-removed photos and bead crops of the hero weld
-├── public/fonts/                 Inter + JetBrains Mono (variable, local)
-├── scripts/
-│   ├── measure_process.py        arc-on statistics → docs/process_stats.csv
-│   ├── run_vlm_hero.py           merged Intel VLM on named welds
-│   ├── destick_hero.py           project label-removal pipeline on the hero photos
-│   └── contact_sheets.py         review sheets from a --sequence render
+│   ├── reference_analysis.md     what 22 CV project demos do, and what WELDER takes from them
+│   ├── reference_notes/          per-reference answers to the ten questions
+│   ├── visual_grammar.md         the binding rules for every scene
+│   ├── storyboard.md             the working storyboard (v2) and review questions
+│   ├── video-data-inventory.md   data that exists, what was measured, what is intended
+│   └── process_stats.csv, ts_*.json, vlm_*.md   measurements behind every on-screen number
 ├── src/
-│   ├── data/hero-case.json       the hero case (raw → observations → knowledge → reasoning → action)
-│   ├── data/provenance.json      provenance class of every scientific element
-│   ├── data/hero-signals.json    the full 309-row sensor log
-│   ├── data/history.json         per-weld current for the memory scene
-│   ├── components/               SignalStream, WeldImage, NeuralSentinel, ObservationToken,
-│   │                             KnowledgeGraph, Cards (Rule/Hypothesis/Action/Router/EvidenceLink),
-│   │                             WeldCell, ArchDiagram, SceneShell, Text
-│   ├── scenes/01-…11-*.tsx       one file per scene, each exporting its duration
-│   ├── styles/tokens.ts          colour / type / layout tokens (neural = warm, symbolic = cool)
-│   └── Root.tsx                  composition `WelderHero` (+ one composition per scene)
-└── out/                          renders (git-ignored)
+│   ├── scenes/NN-*.tsx           seven scenes, each a pure function of progress 0..1
+│   ├── scenes/registry.ts        order, durations, notes, keyframes
+│   ├── components/               ArcClip, Photo, Trace, TraceLane, SplitStage, marks (Chip, Stamp, Region, Link…)
+│   ├── data/                     hero weld + good weld logs, case, provenance, marks
+│   ├── lib/                      SceneHost (frame → progress), asset paths, easing, geometry, layout
+│   └── Root.tsx                  Remotion compositions: WelderHero + scene-01…07
+├── storyboard/                   Vite page: Director Mode (?director=1) and the plain sequence
+├── scripts/                      shot.py (keyframe screenshots), export_signals.py, destick_hero.py, …
+├── public/hero/                  label-removed photos, arc video (WebM/MP4), fonts
+└── legacy/                       the v1 (11-scene) source and its docs, kept for reference
 ```
 
 ## Commands
 
 ```bash
 npm install
-npm start                                   # Remotion Studio
+npm run storyboard                 # http://localhost:8094/?director=1  (scene tabs, play, scrub, keyframes)
 npm run typecheck
-npm run render                              # out/welder-hero.mp4 (crf 16, yuv420p)
-# review sequence, one frame per second at half size:
-npx remotion render src/index.ts WelderHero out/stills --sequence --image-format=jpeg --every-nth-frame=30 --scale=0.5
-python scripts/contact_sheets.py out/stills out/sheets 30
-# single scene:
-npx remotion render src/index.ts scene-07-reasoning out/scene07.mp4
+npm start                          # Remotion Studio (same scenes)
+true  out/shots 3:0.9 5:0.52      # keyframe PNGs via Playwright
+true  src/index.ts scene-05 out/s5.jpg --frame=340
+npm run render                     # only after docs/design_freeze.md exists
 ```
 
-Data scripts run from the repository root with the project environment, e.g.
-`uv run python video/scripts/measure_process.py Good,Undercut`.
+Director Mode keys: `space` play/pause, `←`/`→` one frame (`shift` ×10), `[` `]` previous/next
+scene, `g` safe-area guides, `n` notes, `Home`/`End`. The URL carries `scene` and `p`.
 
-## Provenance rules
+## Provenance
 
-Every number on screen is a measured value from weld `03-15-23-0080-05` or from the good-weld
-reference set; every knowledge item is a kb-v1 entity or edge; routing, hypothesis verdicts,
-memory aggregation and recommendations are intended system behaviour and are tagged as such in
-`src/data/provenance.json` and disclosed in the footer. No accuracy, confidence or benchmark
-figure appears anywhere.
-
-## Live demo
-
-`npm run demo` serves `demo/` (index.html + 1080p web encode, 6 MB; the full-resolution master is `out/welder-hero.mp4`) on port 8093 with byte-range support; open `http://<host>:8093/` from any machine that can reach the host. `npm run demo:build` regenerates the page from `scripts/demo_template.html`; `scripts/build_demo.py --embed` builds the self-contained Artifact version.
+Every number on screen is measured from weld `03-15-23-0080-05`, the good-weld reference set,
+or weld `02-17-23-0106-00`; knowledge items are kb-v1 entities; the undercut region, the
+routing and the hypothesis verdicts are intended system behaviour or illustration and are
+tagged as such in `src/data/provenance.json`. No accuracy, latency or confidence figure appears.
 
 ## Data licence
 
-The photos under `public/hero/` are derived, label-removed frames of one weld from the Intel Robotic Welding Multimodal Dataset (IntelLabs, research use). They are included for the demonstration only; the dataset's own terms apply to any further use. Model weights and the raw dataset are not part of this repository.
+Photos and the arc video under `public/hero/` are derived, label-removed material from two
+welds of the Intel Robotic Welding Multimodal Dataset (research use; the dataset's terms
+apply). Model weights and the raw dataset are not part of this repository.

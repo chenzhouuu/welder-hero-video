@@ -1,0 +1,154 @@
+{
+  "$schema_note": "WELDER hero video case. Every leaf is tagged in provenance.json by JSON path. Numbers are measured from the raw sensor CSV unless the provenance says otherwise.",
+  "case_id": "WELDER-HERO-01",
+  "labels": {
+    "operator": "W017",
+    "station": "Station 04",
+    "part": "A1024",
+    "weld": "B087",
+    "wps": "WPS-014",
+    "note": "Illustrative traceability labels. The dataset has no operator, station, part, or WPS fields; the real identifier is raw_data.part_no."
+  },
+  "raw_data": {
+    "dataset": "Intel Robotic Welding Multimodal Dataset (local mirror)",
+    "subdir": "undercut_4_03-15-23_Fe410/03-15-23-0080-05",
+    "part_no": "03-15-23-0080-05",
+    "split": "VAL",
+    "ground_truth_label": "Undercut",
+    "image": {
+      "original": "images/20230316_125*.jpg (5 views, 2000x900)",
+      "plate_view": "hero/plate_front.jpg",
+      "bead_strip": "hero/bead_strip.jpg",
+      "bead_oblique": "hero/bead_oblique.jpg",
+      "note": "plate_front is the front view with the printed part-number label repainted by the project destick pipeline; bead crops are the project's label-removed gold crops (run200 idx 180 / views idx 168)."
+    },
+    "signals": {
+      "file": "hero-signals.json",
+      "channels": ["Primary Weld Current (A)", "Secondary Weld Voltage (V)", "Feed (mm/min)", "CO2 Weld Flow (L/min)", "Pressure (bar)", "Wire Consumed (mm)"],
+      "sampling_interval_s": 0.116,
+      "n_rows": 309,
+      "arc_on_rows": [55, 264],
+      "arc_on_window_s": [6.4, 30.6]
+    },
+    "context": {
+      "joint": "FILLET",
+      "thickness_mm": 7,
+      "material": "Fe410",
+      "process": "CO2 MAG (GMAW), robotic",
+      "nominal_current_A": 300,
+      "nominal_voltage_V": 19.0,
+      "nominal_gas_bar": 3.2,
+      "nominal_robot_speed_cm_min": 30
+    }
+  },
+  "neural_observations": {
+    "visual": {
+      "defect": "UNDERCUT",
+      "location": "WELD TOE (lower toe, middle-to-right of bead)",
+      "morphology": "CONTINUOUS TOE GROOVE; UNEVEN BEAD WIDTH",
+      "product_quality": "ABNORMAL",
+      "source_statement": "A dark, continuous linear groove/depression is visible along the lower weld toe, most pronounced through the middle-to-right portion of the bead. The weld metal does not consistently blend into and fill the toe region, which is direct visual evidence of Undercut."
+    },
+    "process": {
+      "arc_stability": "NOMINAL",
+      "current": {"state": "STEADY", "arc_on_mean_A": 276.6, "plateau_mean_A": 279.3, "plateau_cv": 0.039, "trend": "keep steady", "peak_A": 321.5, "peak_t_s": 18.2},
+      "voltage": {"state": "STEADY", "arc_on_mean_V": 17.6, "plateau_cv": 0.028, "trend": "keep steady"},
+      "wire_feed": {"state": "RAMPING (typical of every weld in this cell)", "arc_on_mean_mm_min": 124.0, "trend": "increase"},
+      "gas": {"state": "FLOWING", "arc_on_mean_L_min": 13.3},
+      "dropouts": "NONE",
+      "instability_windows": "start/stop transients only (rows 40-70, 248-278)",
+      "process_integrity": "NOMINAL",
+      "reference": {
+        "population": "good fillet Fe410 welds, n=140, per-weld arc-on statistics",
+        "current_cv_p95": 0.116,
+        "voltage_cv_p95": 0.119
+      }
+    }
+  },
+  "symbolic_context": {
+    "joint": "FILLET",
+    "material": "Fe410",
+    "thickness_mm": 7,
+    "wps": "WPS-014",
+    "wps_window": {
+      "current_A": [119, 182],
+      "voltage_V": [17.5, 22.3],
+      "note": "p5-p95 of per-weld arc-on means over good fillet Fe410 welds; stands in for a qualified WPS window"
+    },
+    "acceptance": {
+      "iso5817_stringent_mm": 0.5,
+      "iso5817_moderate_mm": 1.0,
+      "aws_d1_1_mm": 1.0
+    }
+  },
+  "symbolic_knowledge": {
+    "kb": "WELDER-KB (kb-v1, GraphRAG index over 45 welding documents; 4,986 entities, 9,855 relationships)",
+    "defect_entity": {"title": "UNDERCUT", "type": "WELD_DEFECT", "degree": 77, "definition": "an irregular groove at the toe of a run in the parent metal"},
+    "cause_edges": [
+      {"source": "WELDING CURRENT", "type": "PROCESS_PARAMETER", "weight": 8, "text": "High welding current will also cause undercut; this is generally associated with the need for a high travel speed to avoid overfilling of the joint"},
+      {"source": "TRAVEL SPEED TOO FAST", "type": "PROCESS_CONDITION", "weight": 9, "text": "Travel speed that is too fast, without using enough filler metal, is a common cause of undercut"},
+      {"source": "EXCESSIVE VOLTAGE", "type": "PROCESS_CONDITION", "weight": 9, "text": "Excessive voltage is a common cause of undercut"},
+      {"source": "EXCESSIVE ARC LENGTH", "type": "PROCESS_CONDITION", "weight": 7, "text": "Excessive arc length is noted as contributing to undercut"},
+      {"source": "INCORRECT GUN ANGLE", "type": "PROCESS_CONDITION", "weight": 9, "text": "Incorrect gun angle, with arc focus too much on the bottom plate and not enough on the top plate, can create undercut"},
+      {"source": "POOR WELDER TECHNIQUE", "type": "PROCESS_CONDITION", "weight": 8, "text": "Poor welder technique can cause undercut"},
+      {"source": "ARC PRESSURE", "type": "PHYSICAL_MECHANISM", "weight": 9, "text": "High arc pressure can push molten metal away from the toes, causing or promoting undercut"}
+    ],
+    "no_edge": {"source": "ARC INSTABILITY", "target": "UNDERCUT", "text": "kb-v1 contains ARC INSTABILITY (degree 15) but no edge from it to UNDERCUT"},
+    "remedy_edges": [
+      {"source": "REDUCE WELDING CURRENT", "weight": 9},
+      {"source": "REDUCE TRAVEL SPEED", "weight": 18},
+      {"source": "REDUCE VOLTAGE", "weight": 8},
+      {"source": "ANGLE TORCH TO PUSH WELD METAL TO FILL MELTED GROOVE", "weight": 9},
+      {"source": "INCREASE WIRE FEED SPEED", "weight": 9}
+    ],
+    "retrieved_units": [
+      "kb-v1:industry/bernard_causes_of_gmaw_flaws.md#c0002",
+      "kb-v1:industry/kemppi_common_welding_defects.md#c0001",
+      "kb-v1:physics/04_molten_pool_dynamics_humping_undercut_overlap.md#c0001",
+      "kb-v1:twi/jk004_mig_mag_welding_process.md#c0000"
+    ],
+    "retrieval_query": "What process conditions and physical mechanisms cause undercut in CO2 MAG (GMAW) welding of steel, and how can it be prevented or corrected?"
+  },
+  "reasoning": {
+    "trigger": {
+      "observed": {"product_quality": "ABNORMAL", "process_integrity": "NOMINAL"},
+      "simple_hypothesis": "Electrical process instability caused the defect",
+      "simple_hypothesis_predicts": {"product_quality": "ABNORMAL", "process_integrity": "ABNORMAL"},
+      "verdict": "OBSERVATIONS INCONSISTENT WITH THE SIMPLE HYPOTHESIS → ESCALATE TO SLOW REASONING"
+    },
+    "candidate_hypotheses": [
+      {"id": "H1", "name": "Electrical instability", "mechanism": "unstable arc / metal transfer", "predicts": "current and voltage fluctuate during the weld", "evidence": "current CV 0.039, voltage CV 0.028 on the plateau; no instability window inside the arc-on plateau; kb-v1 has no ARC INSTABILITY → UNDERCUT edge", "verdict": "WEAKENED"},
+      {"id": "H2", "name": "Excessive heat input (current above window)", "mechanism": "high arc energy melts a toe groove faster than filler can refill it", "predicts": "current above the WPS window with a stable arc", "evidence": "plateau mean 279 A vs window 119-182 A (rule check: violated); wire feed 124 vs 41 mm/min reference; kb-v1 edge WELDING CURRENT → UNDERCUT", "verdict": "SUPPORTED"},
+      {"id": "H3", "name": "Travel speed too fast", "mechanism": "insufficient fill at the toe", "predicts": "high travel speed for the given deposition", "evidence": "nominal robot speed 30 vs 25 cm/min for good welds; no travel-speed sensor in the log", "verdict": "PLAUSIBLE, UNVERIFIED"},
+      {"id": "H4", "name": "Torch / work angle", "mechanism": "arc focused on the bottom plate", "predicts": "one-sided (lower-toe) undercut", "evidence": "lower-toe predominance in the image; no angle sensor", "verdict": "PLAUSIBLE, UNOBSERVED"}
+    ],
+    "supported": ["H2"],
+    "plausible": ["H3", "H4"],
+    "weakened": ["H1"],
+    "explanation": "MECHANISM-CONSISTENT EXPLANATION: heat input above the qualified window (current ~279 A against a 119-182 A window) with a stable arc; toe groove consistent with WELDING CURRENT → UNDERCUT. Contributions of travel speed and torch angle cannot be separated without travel-position or angle sensing.",
+    "teacher_ranked_causes": [
+      {"rank": 1, "factor": "Excessive or locally elevated arc energy during the active weld interval", "support": ["visual", "process", "kb-v1:industry/bernard_causes_of_gmaw_flaws.md#c0002"]},
+      {"rank": 2, "factor": "Transient current peak and high-current operating band causing enhanced toe melting and molten-pool displacement", "support": ["visual", "process", "kb-v1:industry/kemppi_common_welding_defects.md#c0001"]},
+      {"rank": 3, "factor": "Unstable feed progression and oscillatory deposition condition", "support": ["visual", "process", "kb-v1:physics/04_molten_pool_dynamics_humping_undercut_overlap.md#c0001"]},
+      {"rank": 4, "factor": "Possible non-optimal torch angle or travel technique, inferred from one-sided lower-toe predominance", "support": ["visual", "kb-v1:industry/bernard_basics_mig_troubleshooting.md#c0001"]}
+    ],
+    "teacher_uncertainty": "no synchronized travel-position signal or arc-voltage trace is available; therefore, the exact spatial location and relative contribution of torch angle versus travel behavior cannot be quantified from the supplied data alone."
+  },
+  "downstream_action": {
+    "inspection": "Gauge toe groove depth against ISO 5817 (0.5 mm stringent / 1 mm moderate) before release",
+    "process": "Verify the programmed current against WPS-014 before the next batch; reduce welding current (kb-v1 remedy edge, w9)",
+    "training": "Parameter set-up and WPS adherence; torch work-angle consistency (only if H4 is confirmed by added sensing)",
+    "memory": "Store case with observations, ranked hypotheses, and evidence links"
+  },
+  "history": {
+    "note": "Aggregation over the dataset's undercut welds, presented as the station's history",
+    "undercut_welds_same_cell": 140,
+    "sessions": 7,
+    "date": "2023-03-15",
+    "all_above_window": true,
+    "median_current_A": 283.0,
+    "reference_median_current_A": 133.7,
+    "median_current_cv": 0.083,
+    "reference_current_cv": 0.076
+  }
+}

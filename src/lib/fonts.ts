@@ -1,17 +1,11 @@
 import {loadFont} from '@remotion/fonts';
-import {staticFile} from 'remotion';
+import {asset} from './asset';
 
-/** Load the two variable fonts from public/fonts (no network at render time). */
-export const loadFonts = (): Promise<void[]> =>
-  Promise.all([
-    loadFont({
-      family: 'Inter Variable',
-      url: staticFile('fonts/Inter.woff2'),
-      weight: '100 900',
-    }),
-    loadFont({
-      family: 'JetBrains Mono Variable',
-      url: staticFile('fonts/JetBrainsMono.woff2'),
-      weight: '100 800',
-    }),
-  ]);
+let loaded: Promise<void> | undefined;
+/** Inter variable from public/fonts; safe to call in both hosts. */
+export const loadFonts = (): Promise<void> => {
+  if (!loaded) {
+    loaded = loadFont({family: 'Inter Variable', url: asset('fonts/Inter.woff2'), weight: '100 900'}).catch(() => undefined);
+  }
+  return loaded;
+};
