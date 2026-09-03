@@ -29,6 +29,9 @@ through the proposed system without ever leaving the frame:
 Hard cuts: 21 s (footage → photo) and 82 s (training → loop). Everything else is a camera move
 on the same objects (`src/story/layout.ts` holds every track).
 
+The reasoning chapter's logic — inputs, knowledge, test rule, the three tests, beats,
+provenance — is written out in `chapter5_reasoning_logic.md`.
+
 ## Review keyframes
 
 `?director=1&t=…`: 7.5 live welding + signals · 17.5 fast process inference · 25.5 bead
